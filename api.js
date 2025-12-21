@@ -1,7 +1,7 @@
 // Замени на свой, чтобы получить независимый от других набор данных.
 // "боевая" версия инстапро лежит в ключе prod
-// const personalKey = "prod";
-// const baseHost = "https://webdev-hw-api.vercel.app";
+// export const personalKey = "prod";
+// export const baseHost = "https://webdev-hw-api.vercel.app";
 const personalKey = "natalya-gromova";
 const baseHost = "https://wedev-api.sky.pro";
 const postsHost = `${baseHost}/api/v1/${personalKey}/instapro`;
@@ -66,6 +66,24 @@ export function uploadImage({ file }) {
     method: "POST",
     body: data,
   }).then((response) => {
+    if (!response.ok) {
+      throw new Error(`Ошибка загрузки: ${response.status}`);
+    }
     return response.json();
+  }).catch((error) => {
+    console.error("Детали ошибки:", {
+      message: error.message,
+      file: file.name,
+      size: file.size,
+      type: file.type
+    });
+    
+    // Сброс состояния кнопки
+    const labelEl = document.querySelector(".file-upload-label");
+    if (labelEl) {
+      labelEl.removeAttribute("disabled");
+      labelEl.textContent = "Выберите фото";
+    }
+    alert(`Ошибка загрузки: Попробуйте другой файл или повторите позже.`);
   });
 }

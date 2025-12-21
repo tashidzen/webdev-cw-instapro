@@ -1,4 +1,8 @@
+import { renderUploadImageComponent } from "./upload-image-component.js";
+
 export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
+  let imageUrl = "";
+  
   const render = () => {
     // @TODO: Реализовать страницу добавления поста
     const appHtml = `
@@ -16,16 +20,11 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
                 <h3 class="form-title">Добавить пост</h3>
                 <div class="form-inputs">
                   <div class="upload-image-container">
-                    <div class="upload=image">
-                      <label class="file-upload-label secondary-button">
-                          <input type="file" class="file-upload-input" style="display:none">
-                          Выберите фото
-                      </label>
-                    </div>
+
                   </div>
                   <label>
                     Опишите фотографию:
-                    <textarea class="input textarea" rows="4"></textarea>
+                    <textarea class="input textarea" rows="4" id="description-text"></textarea>
                     </label>
                     <button class="button" id="add-button">Добавить</button>
                 </div>
@@ -35,10 +34,33 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
 
     appEl.innerHTML = appHtml;
 
+    const uploadImageContainer = appEl.querySelector(".upload-image-container");
+    if (uploadImageContainer) {
+      renderUploadImageComponent({
+        element: uploadImageContainer,
+        onImageUrlChange(newImageUrl) {
+          imageUrl = newImageUrl;
+        },
+      });
+    }
+
     document.getElementById("add-button").addEventListener("click", () => {
+
+      const descriptionText = document.getElementById("description-text").value;
+
+      if (!imageUrl) {
+        alert("Пожалуйста, выберите изображение");
+        return;
+      }
+
+      if (!descriptionText) {
+        alert("Пожалуйста, добавьте описание");
+        return;
+      }
+
       onAddPostClick({
-        description: "Описание картинки",
-        imageUrl: "https://image.png",
+        description: descriptionText,
+        imageUrl: imageUrl,
       });
     });
   };
