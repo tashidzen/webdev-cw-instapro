@@ -1,15 +1,17 @@
 import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { posts, goToPage } from "../index.js";
+import { initLikes } from "./initLikes.js";
 
 export function renderPostsPageComponent({ appEl }) {
   // реализован рендер постов из api
 
   console.log("Актуальный список постов:", posts);
 
-  const postsHtml = posts.map((post) => {
+  const postsHtml = posts.map((post, index) => {
+
    return `
-                  <li class="post">
+                  <li class="post" post-id=${post.id}>
                     <div class="post-header" data-user-id=${post.user.id}>
                         <img src="${post.user.imageUrl}" class="post-header__user-image">
                         <p class="post-header__user-name">${post.user.name}</p>
@@ -18,8 +20,8 @@ export function renderPostsPageComponent({ appEl }) {
                       <img class="post-image" src="${post.imageUrl}">
                     </div>
                     <div class="post-likes">
-                      <button data-post-id=${post.likes.id} class="like-button">
-                        <img src="./assets/images/like-active.svg">
+                      <button data-post-id=${post.id} class="like-button" data-index=${index}>
+                      <img src="${post.isLiked ? './assets/images/like-active.svg' : './assets/images/like-not-active.svg'}" class="like-icon">
                       </button>
                       <p class="post-likes-text">
                         Нравится: <strong>${post.likes.length}</strong>
@@ -60,4 +62,5 @@ export function renderPostsPageComponent({ appEl }) {
       });
     });
   }
+  initLikes();
 }

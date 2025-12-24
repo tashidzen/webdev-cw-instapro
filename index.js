@@ -171,7 +171,6 @@ const renderApp = () => {
     appEl.innerHTML = "Здесь будет страница фотографий пользователя";
     return renderPostsPageComponent({
       appEl,
-      userId: currentUserId,
     });
   }
 };
