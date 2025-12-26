@@ -2,6 +2,7 @@ import { USER_POSTS_PAGE } from "../routes.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { posts, goToPage } from "../index.js";
 import { initLikes } from "./initLikes.js";
+import { formatDate } from "./formatDate.js";
 
 export function renderPostsPageComponent({ appEl }) {
   // реализован рендер постов из api
@@ -32,7 +33,7 @@ export function renderPostsPageComponent({ appEl }) {
                       ${post.description}
                     </p>
                     <p class="post-date">
-                      ${post.createdAt}
+                      ${formatDate(post.createdAt)}
                     </p>
                   </li>
     `;
