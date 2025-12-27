@@ -68,7 +68,7 @@ export const goToPage = (newPage, data) => {
     }
 
     if (newPage === USER_POSTS_PAGE) {
-      // @@TODO: реализовать получение постов юзера из API
+      // получение постов юзера из API
       console.log("Открываю страницу пользователя: ", data.userId);
       currentUserId = data.userId;
       return getUserPosts({ token: getToken(), userId: currentUserId })

@@ -23,6 +23,11 @@
   margin-bottom: 8px;
 }
 
+.header-buttons-container{
+  display: grid;
+  gap: 20px;
+}
+
 .header-button {
   padding: 0;
   border: none;
@@ -36,6 +41,15 @@
 .logout-button {
   width: 130px;
   text-align: right;
+}
+
+.my-page-button {
+  text-align: right;
+  background-image: url("./assets/images/user.svg");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 16px 16px; /* Укажите размер */
+  display: inline-block; /* Для правильного отображения */
 }
 
 .posts {
