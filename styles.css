@@ -48,8 +48,8 @@
   background-image: url("./assets/images/user.svg");
   background-repeat: no-repeat;
   background-position: left center;
-  background-size: 16px 16px; /* Укажите размер */
-  display: inline-block; /* Для правильного отображения */
+  background-size: 16px 16px;
+  display: inline-block;
 }
 
 .posts {
@@ -61,8 +61,8 @@
 }
 
 .post-header {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   margin-bottom: 10px;
   cursor: pointer;
@@ -74,6 +74,25 @@
   object-fit: cover;
   border-radius: 40px;
   margin-right: 10px;
+}
+
+.delete-button{
+  background-color: white;
+  width: 40px;
+  height: 40px;
+  margin-left: 75%;
+  display: block;
+  position: relative;
+  justify-self: end;
+}
+
+.delete-icon {
+  border: none;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  position: absolute;
+  transform: translate(-50%, -50%);
 }
 
 .post-image-container {
