@@ -21,7 +21,7 @@ export let page = null;
 export let posts = [];
 export let currentUserId = null;
 
-const getToken = () => {
+export const getToken = () => {
   const token = user ? `Bearer ${user.token}` : undefined;
   return token;
 };
