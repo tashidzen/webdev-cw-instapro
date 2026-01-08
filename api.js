@@ -1,7 +1,10 @@
-// Замени на свой, чтобы получить независимый от других набор данных.
-// "боевая" версия инстапро лежит в ключе prod
-// const personalKey = "prod";
-// const baseHost = "https://webdev-hw-api.vercel.app";
+import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
+import {
+  ADD_POSTS_PAGE,
+  POSTS_PAGE,
+} from "./routes.js";
+import { getToken, goToPage } from "./index.js";
+
 const personalKey = "natalya-gromova";
 const baseHost = "https://wedev-api.sky.pro";
 const postsHost = `${baseHost}/api/v1/${personalKey}/instapro`;
@@ -97,11 +100,53 @@ export function uploadImage({ file }) {
     });
     
     // Сброс состояния кнопки
-    const labelEl = document.querySelector(".file-upload-label");
-    if (labelEl) {
-      labelEl.removeAttribute("disabled");
-      labelEl.textContent = "Выберите фото";
-    }
+
+      const appEl = document.getElementById("app");
+      renderAddPostPageComponent({
+            appEl,
+            onAddPostClick({ description, imageUrl }) {
+              //добавление поста в API
+              console.log("Добавляю пост...", { description, imageUrl });
+      
+              const personalKey = "natalya-gromova";
+              const baseHost = "https://wedev-api.sky.pro";
+              const postsHost = `${baseHost}/api/v1/${personalKey}/instapro`;
+      
+              fetch(postsHost, {
+                method: "POST",
+                headers: {
+                  Authorization: getToken(),
+                },
+                body: JSON.stringify({
+                  description: description,
+                  imageUrl: imageUrl,
+                }),
+              })
+                .then((response) => {
+                  // Проверяем статус ответа
+                  if (response.status === 400) {
+                    throw new Error("Неверные данные формы отправки");
+                  }
+                  if (response.status === 500) {
+                    throw new Error("Ошибка сервера");
+                  }
+                  return response.json();
+                })
+                .then((data) => {
+                  console.log("Пост успешно добавлен:", data);
+                  // Возвращаемся на главную страницу с постами
+                  goToPage(POSTS_PAGE);
+                })
+                .catch((error) => {
+                  console.error("Ошибка:", error);
+                  goToPage(ADD_POSTS_PAGE);
+                  alert(`Ошибка при добавлении поста: ${error.message}`);         
+            });
+          },
+        });
+
+      // labelEl.textContent = "Выберите фото";
+
     alert(`Ошибка загрузки: Попробуйте другой файл или повторите позже.`);
   });
 }
@@ -127,6 +172,24 @@ export function likePost({ token, postId }) {
 export function unlikePost({ token, postId }) {
   return fetch(`${postsHost}/${postId}/dislike`, {
     method: "POST",
+    headers: {
+      Authorization: token,
+    },
+  })
+    .then((response) => {
+      if (response.status === 401) {
+        throw new Error("Нет авторизации");
+      }
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+      return response.json();
+    })
+}
+
+export function deletePost({ token, postId }) {
+  return fetch(`${postsHost}/${postId}`, {
+    method: "DELETE",
     headers: {
       Authorization: token,
     },

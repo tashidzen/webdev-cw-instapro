@@ -1,10 +1,13 @@
 import { renderUploadImageComponent } from "./upload-image-component.js";
+import { replace } from "./replaceAll.js";
+import { goToPage, logout, user } from "../index.js";
+import { AUTH_PAGE, POSTS_PAGE, USER_POSTS_PAGE } from "../routes.js";
 
 export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
   let imageUrl = "";
-  
+
   const render = () => {
-    // @TODO: Реализовать страницу добавления поста
+    // страница добавления поста
     const appHtml = `
     <div class="page-container">
       <div class="header-container">      
@@ -13,7 +16,10 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
             <button class="header-button add-or-login-button">
               <div title="Добавить пост" class="add-post-sign"></div>
             </button>
-          <button title="Админ" class="header-button logout-button">Выйти</button>  
+          <div class="header-buttons-container">
+          <button title="Админ" class="header-button logout-button">Выйти</button>
+          <button class="header-button my-page-button">Моя страница</button>
+          </div>
         </div>
       </div>
         <div class="form">
@@ -45,7 +51,6 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
     }
 
     document.getElementById("add-button").addEventListener("click", () => {
-
       const descriptionText = document.getElementById("description-text").value;
 
       if (!imageUrl) {
@@ -59,10 +64,38 @@ export function renderAddPostPageComponent({ appEl, onAddPostClick }) {
       }
 
       onAddPostClick({
-        description: descriptionText,
+        description: replace(descriptionText),
         imageUrl: imageUrl,
       });
     });
+
+        /**
+     * Обработчик клика по логотипу.
+     * Перенаправляет на страницу с постами.
+     */
+    document.querySelector(".logo").addEventListener("click", () => {
+      goToPage(POSTS_PAGE);
+    });
+
+    /**
+   * Обработчик клика по моей странице.
+   * Перенаправляет на страницу с постами текущего пользователя.
+   */
+    document.querySelector(".my-page-button").addEventListener("click", () => {
+        if (user) {
+          goToPage(USER_POSTS_PAGE, {
+            userId: user._id,
+          });
+          }else{
+            goToPage(AUTH_PAGE);
+          }
+      });
+
+    /**
+      * Обработчик клика по кнопке "Выйти".
+      * Если кнопка существует (т.е. пользователь авторизован), вызывает функцию `logout`.
+      */
+    document.querySelector(".logout-button")?.addEventListener("click", logout);
   };
 
   render();
