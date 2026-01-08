@@ -1,4 +1,4 @@
-import { getPosts } from "./api.js";
+import { getPosts, getUserPosts } from "./api.js";
 import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
 import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
@@ -19,6 +19,7 @@ import {
 export let user = getUserFromLocalStorage();
 export let page = null;
 export let posts = [];
+export let currentUserId = null;
 
 const getToken = () => {
   const token = user ? `Bearer ${user.token}` : undefined;
@@ -61,7 +62,7 @@ export const goToPage = (newPage, data) => {
           renderApp();
         })
         .catch((error) => {
-          console.error(error);
+          console.error("Ошибка при получении постов:", error);
           goToPage(POSTS_PAGE);
         });
     }
@@ -69,9 +70,17 @@ export const goToPage = (newPage, data) => {
     if (newPage === USER_POSTS_PAGE) {
       // @@TODO: реализовать получение постов юзера из API
       console.log("Открываю страницу пользователя: ", data.userId);
-      page = USER_POSTS_PAGE;
-      posts = [];
-      return renderApp();
+      currentUserId = data.userId;
+      return getUserPosts({ token: getToken(), userId: currentUserId })
+        .then((userPosts) => {
+          page = USER_POSTS_PAGE;
+          posts = userPosts;
+          renderApp();
+        })
+        .catch((error) => {
+          console.error("Ошибка при получении постов пользователя:", error);
+          goToPage(POSTS_PAGE);
+        });
     }
 
     page = newPage;
@@ -110,7 +119,7 @@ const renderApp = () => {
     return renderAddPostPageComponent({
       appEl,
       onAddPostClick({ description, imageUrl }) {
-        // @TODO: реализовать добавление поста в API
+        //добавление поста в API
         console.log("Добавляю пост...", { description, imageUrl });
 
         const personalKey = "natalya-gromova";
@@ -128,9 +137,6 @@ const renderApp = () => {
           }),
         })
           .then((response) => {
-            console.log("6.", description, imageUrl);
-            console.log("7. Получен ответ, статус:", response.status);
-            console.log("8. Статус OK?:", response.ok);
             // Проверяем статус ответа
             if (response.status === 400) {
               throw new Error("Неверные данные формы отправки");
@@ -163,7 +169,10 @@ const renderApp = () => {
   if (page === USER_POSTS_PAGE) {
     // @TODO: реализовать страницу с фотографиями отдельного пользвателя
     appEl.innerHTML = "Здесь будет страница фотографий пользователя";
-    return;
+    return renderPostsPageComponent({
+      appEl,
+      userId: currentUserId,
+    });
   }
 };
 
