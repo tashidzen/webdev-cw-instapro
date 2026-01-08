@@ -112,9 +112,46 @@ const renderApp = () => {
       onAddPostClick({ description, imageUrl }) {
         // @TODO: реализовать добавление поста в API
         console.log("Добавляю пост...", { description, imageUrl });
-        goToPage(POSTS_PAGE);
-      },
-    });
+
+        const personalKey = "natalya-gromova";
+        const baseHost = "https://wedev-api.sky.pro";
+        const postsHost = `${baseHost}/api/v1/${personalKey}/instapro`;
+
+        fetch(postsHost, {
+          method: "POST",
+          headers: {
+            Authorization: getToken(),
+          },
+          body: JSON.stringify({
+            description: description,
+            imageUrl: imageUrl,
+          }),
+        })
+          .then((response) => {
+            console.log("6.", description, imageUrl);
+            console.log("7. Получен ответ, статус:", response.status);
+            console.log("8. Статус OK?:", response.ok);
+            // Проверяем статус ответа
+            if (response.status === 400) {
+              throw new Error("Неверные данные формы отправки");
+            }
+            if (response.status === 500) {
+              throw new Error("Ошибка сервера");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Пост успешно добавлен:", data);
+            // Возвращаемся на главную страницу с постами
+            goToPage(POSTS_PAGE);
+          })
+          .catch((error) => {
+            console.error("Ошибка:", error);
+            goToPage(ADD_POSTS_PAGE);
+            alert(`Ошибка при добавлении поста: ${error.message}`);         
+      });
+    },
+  });
   }
 
   if (page === POSTS_PAGE) {
