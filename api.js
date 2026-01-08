@@ -1,7 +1,7 @@
 // Замени на свой, чтобы получить независимый от других набор данных.
 // "боевая" версия инстапро лежит в ключе prod
-//const personalKey = "prod";
-//const baseHost = "https://webdev-hw-api.vercel.app";
+// const personalKey = "prod";
+// const baseHost = "https://webdev-hw-api.vercel.app";
 const personalKey = "natalya-gromova";
 const baseHost = "https://wedev-api.sky.pro";
 const postsHost = `${baseHost}/api/v1/${personalKey}/instapro`;
@@ -104,4 +104,40 @@ export function uploadImage({ file }) {
     }
     alert(`Ошибка загрузки: Попробуйте другой файл или повторите позже.`);
   });
+}
+
+export function likePost({ token, postId }) {
+  return fetch(`${postsHost}/${postId}/like`, {
+    method: "POST",
+    headers: {
+      Authorization: token,
+    },
+  })
+    .then((response) => {
+      if (response.status === 401) {
+        throw new Error("Нет авторизации");
+      }
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+      return response.json();
+    })
+}
+
+export function unlikePost({ token, postId }) {
+  return fetch(`${postsHost}/${postId}/dislike`, {
+    method: "POST",
+    headers: {
+      Authorization: token,
+    },
+  })
+    .then((response) => {
+      if (response.status === 401) {
+        throw new Error("Нет авторизации");
+      }
+      if (!response.ok) {
+        throw new Error(`Ошибка: ${response.status}`);
+      }
+      return response.json();
+    })
 }
